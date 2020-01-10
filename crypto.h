@@ -26,6 +26,7 @@ class Crypto
     void set_string_to_encrypt();
     void encrypt_file_by_key();
     void decrypt_file_by_key();
+    
 
 
 };
