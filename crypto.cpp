@@ -4,38 +4,31 @@ void Crypto::mix_vector_numbers()
 {
     std::random_device dev;
     std::mt19937 gen(dev());
-    std::uniform_int_distribution<int> distribution(32, 126); //ASCII ABC..123...abc...(*^
-    ascii_vector.resize(94);                                 //126  - 32  = 94
-    while (ascii_vector.size() < 95)                          //rand 94 unnique numbers from 32 to 126
-    {
-        int temp = distribution(gen);
+    ascii_vector.resize(94);
 
-        auto result = std::find(std::begin(ascii_vector), std::end(ascii_vector), temp);
-
-        if (result == std::end(ascii_vector))       // if value doesn't exists insert into vector
-            ascii_vector.emplace(ascii_vector.end(), temp);
-    }
+    std::iota(ascii_vector.begin(), ascii_vector.end(), 32);
+    std::shuffle(ascii_vector.begin(), ascii_vector.end(), gen);
 }
 
 void Crypto::make_ascii_map_to_encrypt()
 {
-    mix_vector_numbers(); // Draw vector with unique  numbers
+    mix_vector_numbers(); 
     std::fstream file;
     file.open("./key/key.txt", std::ios::out);
-    char temp = 32;     //in ASCII its space
-    for (auto elem : ascii_vector)  // 94 elements
+    char temp = 32;   
+    for (auto elem : ascii_vector)  
     {
-        map_with_ascii_chars[temp] = elem;  // make a map with key from 32 to 126 and assigned random element
+        map_with_ascii_chars[temp] = elem; 
         if (file.is_open())
         {
-            file << static_cast<char>(elem) << " " << temp << "\n"; // save in file for example : 'a' 'k'
-        }                                                           //                            '4' ' '
-        else                                                        //                            'x' '/'
+            file << static_cast<char>(elem) << " " << temp << "\n"; 
+        }                                                           
+        else                                                       
         {
             std::cout << "unable to open";
         }
 
-        temp++;     // next ASCII character
+        temp++;    
     }
 
     file.close();
@@ -67,7 +60,7 @@ void Crypto::encrypt_file_by_key()
     {
         while (std::getline(key_file, line))
         {
-            map_to_encrypt[line[0]] = line[2];      // assign random character from file "key"
+            map_to_encrypt[line[0]] = line[2];    
             
         }
         
@@ -76,7 +69,7 @@ void Crypto::encrypt_file_by_key()
 
             for (unsigned int i = 0; i < line.length(); i++)
             {
-                auto it = map_to_encrypt.find(line[i]);         // assign an element from map to letter and save in file
+                auto it = map_to_encrypt.find(line[i]);    
                 encrypted_file << it->second;
             }
             encrypted_file << '\n';
@@ -105,7 +98,7 @@ void Crypto::decrypt_file_by_key()
     {
         while (  std::getline(key_file, line))
         {
-            map_to_decrypt[line[2]] = line[0];          // assign random character from file "key"
+            map_to_decrypt[line[2]] = line[0];        
         }
 
         while ( std::getline(file_to_decrypt, line))
@@ -113,7 +106,7 @@ void Crypto::decrypt_file_by_key()
 
             for (unsigned int i = 0; i < line.length(); i++)
             {
-                auto it = map_to_decrypt.find(line[i]);  // decrypt an letter from folder "key"
+                auto it = map_to_decrypt.find(line[i]);  
                 decrypted_file << it->second;
             }
             decrypted_file << '\n';

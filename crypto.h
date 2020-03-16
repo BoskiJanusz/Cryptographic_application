@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 #include <fstream>
-
+#include <numeric>
 
 
 class Crypto
